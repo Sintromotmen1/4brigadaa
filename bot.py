@@ -918,32 +918,49 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    if text in ARTILLERY_BOOKS or text in MINBAT_BOOKS:
-        # В этих разделах пока показываем выбор названия. Отправку документов
-        # включайте только для обычных учебных/справочных материалов,
-        # размещённых в books/general.
-        await message.reply_text(
-            f"Вы выбрали: {text}\n\n"
-            "Для отправки обычного учебного или справочного документа добавьте "
-            "его в папку books/general и укажите имя файла в списке GENERAL_BOOKS.",
-            reply_markup=book_list_keyboard(ARTILLERY_BOOKS if text in ARTILLERY_BOOKS else MINBAT_BOOKS),
-        )
-        return
 
-    if text in GENERAL_BOOKS:
-        file_path = GENERAL_BOOKS_DIR / text
-        if not file_path.is_file():
+    if text in ARTILLERY_BOOKS or text in MINBAT_BOOKS:
+        books_root = Path(__file__).parent / "books"
+
+        if not books_root.is_dir():
             await message.reply_text(
-                f"Файл не найден: {text}\nПроверьте, что он находится в папке books/general.",
+                "Папка books не найдена на сервере.",
                 reply_markup=KEYBOARD,
             )
             return
+
+        matches = [
+            path for path in books_root.rglob("*")
+            if path.is_file() and path.name.casefold() == text.casefold()
+        ]
+
+        if not matches:
+            await message.reply_text(
+                f"Файл не найден: {text}\n"
+                "Проверьте, что книга загружена в папку books на сервере.",
+                reply_markup=book_list_keyboard(
+                    ARTILLERY_BOOKS if text in ARTILLERY_BOOKS
+                    else MINBAT_BOOKS
+                ),
+            )
+            return
+
+        file_path = matches[0]
+
         try:
             with file_path.open("rb") as document:
-                await message.reply_document(document=document, filename=file_path.name)
+                await message.reply_document(
+                    document=document,
+                    filename=file_path.name,
+                )
         except Exception:
-            await message.reply_text("Не удалось отправить файл. Проверьте его формат и права доступа.", reply_markup=KEYBOARD)
+            traceback.print_exc()
+            await message.reply_text(
+                "Не удалось отправить книгу. Проверьте журнал ошибок сервера.",
+                reply_markup=KEYBOARD,
+            )
         return
+
 
     if text == BUTTON_NEW:
         context.user_data.clear()
