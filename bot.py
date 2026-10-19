@@ -32,9 +32,9 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
 if not TELEGRAM_TOKEN:
-    raise ValueError("Не найден TELEGRAM_TOKEN в файле .env")
+    raise ValueError("Не найден в файле .env")
 if not GEMINI_API_KEY:
-    raise ValueError("Не найден GEMINI_API_KEY в файле .env")
+    raise ValueError("Не найден  в файле .env")
 client = genai.Client(api_key=GEMINI_API_KEY)
 TEMPLATE_PATH = Path(__file__).parent / "template.docx"
 # Положите программу боевой подготовки рядом с bot.py. Поддерживается исходное имя файла.
@@ -249,7 +249,7 @@ MINBAT_BOOKS = []
 # Библиотека для обычных учебных и справочных материалов.
 # Помещайте документы в папку books/general рядом с bot.py.
 GENERAL_BOOKS_DIR = Path(__file__).parent / "books" / "general"
-GENERAL_BOOKS = []  # Пример: ["история.docx", "общая_подготовка.pdf"]
+GENERAL_BOOKS = ["курс подготовки артиллерии.docx","Курс стрельб ВС РК.docx","Правила боевого применения Сухопутных войск Вооруженных Сил .docx","Руководство по боевой работе огневых подразделений артиллерии.docx","сборник нормативов.docx"]  # Пример: ["история.docx", "общая_подготовка.pdf"]
 
 
 def book_list_keyboard(book_names):
