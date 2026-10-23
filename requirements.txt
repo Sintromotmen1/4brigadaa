@@ -1,5 +1,0 @@
-python-telegram-bot
-python-dotenv
-python-docx
-google-genai
-Pillow
