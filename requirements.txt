@@ -4,3 +4,5 @@ python-docx
 google-genai
 Pillow
 pypdf
+fastapi
+uvicorn[standard]
